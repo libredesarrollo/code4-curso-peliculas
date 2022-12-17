@@ -29,6 +29,7 @@ $routes->set404Override();
 // $routes->get('pelicula/edit/(:num)','Pelicula::create/$1');
 
 $routes->presenter('pelicula');
+$routes->presenter('categoria');
 
 
 
