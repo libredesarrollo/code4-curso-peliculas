@@ -22,14 +22,14 @@ $routes->setDefaultNamespace('App\Controllers');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 
-// $routes->get('/', 'Home::index');
+ $routes->get('/', 'Home::index');
 
-// $routes->get('pelicula','Pelicula::index');
-// $routes->get('pelicula/new','Pelicula::create');
-// $routes->get('pelicula/edit/(:num)','Pelicula::create/$1');
-
-$routes->presenter('pelicula');
-$routes->presenter('categoria');
+$routes->group('dashboard', function ($routes) {
+    $routes->presenter('pelicula',['controller' => 'Dashboard\Pelicula']);
+    // $routes->presenter('categoria', ['only' => ['index', 'new', 'create']]);
+    // $routes->presenter('categoria', ['except' => 'show']);
+    $routes->presenter('categoria', ['except' => ['show'], 'controller' => 'Dashboard\Categoria']);
+});
 
 
 

@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Pelicula</title>
+    <title>Crear Categoría</title>
 </head>
 
 <body>
-    <form action="/pelicula/create" method="post">
-        <?= view('pelicula/_form', ['op' => 'Crear']) ?>
+    <form action="/dashboard/categoria/create" method="post">
+        <?= view('dashboard/categoria/_form', ['op' => 'Crear']) ?>
     </form>
 </body>
 
