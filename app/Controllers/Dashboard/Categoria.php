@@ -12,6 +12,8 @@ class Categoria extends BaseController
     public function show($id)
     {
 
+       
+
         $categoriaModel = new CategoriaModel();
 
         echo view('dashboard/categoria/show', [
@@ -21,7 +23,9 @@ class Categoria extends BaseController
 
     public function new()
     {
-        echo view('dashboard/categoria/new',[
+        //var_dump(session()->destroy());
+
+        echo view('dashboard/categoria/new', [
             'categoria' => [
                 'titulo' => ''
             ]
@@ -37,7 +41,7 @@ class Categoria extends BaseController
             'titulo' => $this->request->getPost('titulo')
         ]);
 
-        return redirect()->to('/dashboard/categoria');
+        return redirect()->to('/dashboard/categoria')->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function edit($id)
@@ -58,7 +62,7 @@ class Categoria extends BaseController
             'titulo' => $this->request->getPost('titulo')
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function delete($id)
@@ -66,12 +70,15 @@ class Categoria extends BaseController
         $categoriaModel = new CategoriaModel();
         $categoriaModel->delete($id);
 
+        session()->setFlashdata('mensaje', 'Registro eliminado de manera exitosa');
+
         return redirect()->back();
+        // return redirect()->back()->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function index()
     {
-
+        //session()->set('key',array('k','c'));
         $categoriaModel = new CategoriaModel();
 
         echo view('dashboard/categoria/index', [

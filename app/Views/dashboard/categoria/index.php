@@ -12,6 +12,8 @@
     <h1>Listado Categorías </h1>
 
 
+    <?= view('partials/_session') ?>
+
     <a href="/dashboard/categoria/new">Crear</a>
     <table>
 
