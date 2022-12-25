@@ -35,6 +35,8 @@ class Categoria extends BaseController
     public function create()
     {
 
+  
+
         $categoriaModel = new CategoriaModel();
 
         $categoriaModel->insert([

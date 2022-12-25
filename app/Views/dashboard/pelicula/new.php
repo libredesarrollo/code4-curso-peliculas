@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<?= $this->extend('Layouts/dashboard') ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Pelicula</title>
-</head>
+<?= $this->section('contenido') ?>
 
-<body>
-<?= view('partials/_session') ?>
-
-    <form action="/dashboard/pelicula/create" method="post">
-        <?= view('dashboard/pelicula/_form', ['op' => 'Crear']) ?>
-    </form>
-</body>
-
-</html>
+<form action="/dashboard/pelicula/create" method="post">
+    <?= view('dashboard/pelicula/_form', ['op' => 'Crear']) ?>
+</form>
+<?= $this->endSection() ?>
