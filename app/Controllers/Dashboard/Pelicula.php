@@ -11,6 +11,9 @@ class Pelicula extends BaseController
     {
         $peliculaModel = new PeliculaModel();
 
+        // var_dump($peliculaModel->asArray()->find($id));
+        // var_dump($peliculaModel->asObject()->find($id));
+
         echo view('dashboard/pelicula/show', [
             'pelicula' => $peliculaModel->find($id)
         ]);
@@ -19,10 +22,7 @@ class Pelicula extends BaseController
     public function new()
     {
         echo view('dashboard/pelicula/new', [
-            'pelicula' => [
-                'titulo' => '',
-                'descripcion' => ''
-            ]
+            'pelicula' => new PeliculaModel()
         ]);
     }
 
@@ -92,6 +92,11 @@ class Pelicula extends BaseController
     {
 
         $peliculaModel = new PeliculaModel();
+
+        // $db = \Config\Database::connect();
+        // $builder = $db->table('peliculas');
+
+        // return $builder->limit(10, 20)->getCompiledSelect();
 
         echo view('dashboard/pelicula/index', [
             'peliculas' => $peliculaModel->findAll(),

@@ -26,9 +26,7 @@ class Categoria extends BaseController
         //var_dump(session()->destroy());
 
         echo view('dashboard/categoria/new', [
-            'categoria' => [
-                'titulo' => ''
-            ]
+            'categoria' => new CategoriaModel()
         ]);
     }
 

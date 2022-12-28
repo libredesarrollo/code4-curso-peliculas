@@ -22,13 +22,13 @@ Listado de categoías
     </tr>
     <?php foreach ($categorias as $key => $p) : ?>
         <tr>
-            <td><?= $p['id'] ?></td>
-            <td><?= $p['titulo'] ?></td>
+            <td><?= $p->id ?></td>
+            <td><?= $p->titulo ?></td>
             <td>
-                <a href="/dashboard/categoria/show/<?= $p['id'] ?>">Show</a>
-                <a href="/dashboard/categoria/edit/<?= $p['id'] ?>">Edit</a>
+                <a href="/dashboard/categoria/show/<?= $p->id ?>">Show</a>
+                <a href="/dashboard/categoria/edit/<?= $p->id ?>">Edit</a>
 
-                <form action="/dashboard/categoria/delete/<?= $p['id'] ?>" method="post">
+                <form action="/dashboard/categoria/delete/<?= $p->id ?>" method="post">
                     <button type="submit">Delete</button>
                 </form>
 
