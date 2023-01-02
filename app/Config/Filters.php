@@ -2,12 +2,15 @@
 
 namespace Config;
 
+use App\Filters\DashboardFilter;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\Honeypot;
 use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\SecureHeaders;
+
+use App\Filters\MiFiltro;
 
 class Filters extends BaseConfig
 {
@@ -23,6 +26,8 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
+        'DashboardFilter' => DashboardFilter::class
+        // 'mifiltro' => MiFiltro::class
     ];
 
     /**
@@ -33,12 +38,13 @@ class Filters extends BaseConfig
      */
     public $globals = [
         'before' => [
+            // 'mifiltro'
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
         ],
         'after' => [
-            'toolbar',
+            //'toolbar',
             // 'honeypot',
             // 'secureheaders',
         ],
@@ -68,5 +74,20 @@ class Filters extends BaseConfig
      *
      * @var array
      */
-    public $filters = [];
+    public $filters = [
+
+        'DashboardFilter' => [
+            'before' => [
+                'dashboard',
+                'dashboard/*'
+            ]
+        ]
+
+        // 'mifiltro' => [
+        //     'before' => [
+        //         'dashboard/pelicula',
+        //         'dashboard/pelicula/*',
+        //     ]
+        // ]
+    ];
 }

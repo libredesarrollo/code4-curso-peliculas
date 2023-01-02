@@ -44,7 +44,7 @@ class Pelicula extends BaseController
             return redirect()->back()->withInput();
         }
 
-        return redirect()->to('/dashboard/pelicula')->with('mensaje', 'Registro gestionado de manera exitosa');;
+        return redirect()->to('/dashboard/pelicula')->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function edit($id)
