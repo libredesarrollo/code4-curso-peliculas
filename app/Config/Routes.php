@@ -25,13 +25,18 @@ $routes->set404Override();
 
 $routes->get('/', 'Home::index');
 
+$routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
+    $routes->resource('pelicula');
+    $routes->resource('categoria');
+});
+
 $routes->group('dashboard', function ($routes) {
     //test user
     // $routes->get('usuario/crear','\App\Controllers\Web\Usuario::crear_usuario');
     // $routes->get('usuario/probar/contrasena','\App\Controllers\Web\Usuario::probar_contrasena');
-    $routes->presenter('pelicula', ['controller' => 'Dashboard\Pelicula']);
     // $routes->presenter('categoria', ['only' => ['index', 'new', 'create']]);
     // $routes->presenter('categoria', ['except' => 'show']);
+    $routes->presenter('pelicula', ['controller' => 'Dashboard\Pelicula']);
     $routes->presenter('categoria', ['except' => ['show'], 'controller' => 'Dashboard\Categoria']);
 });
 
