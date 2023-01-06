@@ -1,7 +1,7 @@
 <?= $this->extend('Layouts/dashboard') ?>
 
 <?= $this->section('header') ?>
-Listado de categoías
+Listado de categorías
 <?= $this->endSection() ?>
 
 <?= $this->section('contenido') ?>
