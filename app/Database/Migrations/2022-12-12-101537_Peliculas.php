@@ -15,6 +15,11 @@ class Peliculas extends Migration
                 'unsigned' => TRUE,
                 'auto_increment' => TRUE
             ],
+            'categoria_id' => [
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => TRUE
+            ],
             'titulo' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255
@@ -22,10 +27,12 @@ class Peliculas extends Migration
             'descripcion' => [
                 'type' => 'TEXT',
                 'null' => TRUE
-            ]
+            ],
+            
         ]);
 
         $this->forge->addKey('id',TRUE);
+        $this->forge->addForeignKey('categoria_id','categorias','id','CASCADE','CASCADE');
         $this->forge->createTable('peliculas');
     }
 

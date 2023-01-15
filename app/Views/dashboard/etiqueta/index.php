@@ -1,7 +1,7 @@
 <?= $this->extend('Layouts/dashboard') ?>
 
 <?= $this->section('contenido') ?>
-<a href="/dashboard/pelicula/new">Crear</a>
+<a href="/dashboard/etiqueta/new">Crear</a>
 
 <table>
 
@@ -16,24 +16,19 @@
             Categoría
         </th>
         <th>
-            Descripcion
-        </th>
-        <th>
             Opciones
         </th>
     </tr>
-    <?php foreach ($peliculas as $key => $p) : ?>
+    <?php foreach ($etiquetas as $key => $p) : ?>
         <tr>
             <td><?= $p->id ?></td>
             <td><?= $p->titulo ?></td>
             <td><?= $p->categoria ?></td>
-            <td><?= $p->descripcion ?></td>
             <td>
-                <a href="/dashboard/pelicula/show/<?= $p->id ?>">Show</a>
-                <a href="/dashboard/pelicula/edit/<?= $p->id ?>">Edit</a>
-                <a href="<?= route_to('pelicula.etiquetas', $p->id) ?>">Tags</a>
+                <a href="/dashboard/etiqueta/show/<?= $p->id ?>">Show</a>
+                <a href="/dashboard/etiqueta/edit/<?= $p->id ?>">Edit</a>
 
-                <form action="/dashboard/pelicula/delete/<?= $p->id ?>" method="post">
+                <form action="/dashboard/etiqueta/delete/<?= $p->id ?>" method="post">
                     <button type="submit">Delete</button>
                 </form>
 

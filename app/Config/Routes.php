@@ -36,7 +36,12 @@ $routes->group('dashboard', function ($routes) {
     // $routes->get('usuario/probar/contrasena','\App\Controllers\Web\Usuario::probar_contrasena');
     // $routes->presenter('categoria', ['only' => ['index', 'new', 'create']]);
     // $routes->presenter('categoria', ['except' => 'show']);
+    $routes->get('pelicula/etiqueta/(:num)', 'Dashboard\Pelicula::etiquetas/$1', ['as' => 'pelicula.etiquetas']);
+    $routes->post('pelicula/etiqueta/(:num)', 'Dashboard\Pelicula::etiquetas_post/$1', ['as' => 'pelicula.etiquetas']);
+    $routes->post('pelicula/(:num)/etiqueta/(:num)/delete', 'Dashboard\Pelicula::etiqueta_delete/$1/$2', ['as' => 'pelicula.etiqueta_delete']);
+
     $routes->presenter('pelicula', ['controller' => 'Dashboard\Pelicula']);
+    $routes->presenter('etiqueta', ['controller' => 'Dashboard\Etiqueta']);
     $routes->presenter('categoria', ['except' => ['show'], 'controller' => 'Dashboard\Categoria']);
 });
 
