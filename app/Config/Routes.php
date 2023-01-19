@@ -38,6 +38,9 @@ $routes->group('dashboard', function ($routes) {
     // $routes->presenter('categoria', ['except' => 'show']);
     $routes->get('pelicula/etiqueta/(:num)', 'Dashboard\Pelicula::etiquetas/$1', ['as' => 'pelicula.etiquetas']);
     $routes->post('pelicula/etiqueta/(:num)', 'Dashboard\Pelicula::etiquetas_post/$1', ['as' => 'pelicula.etiquetas']);
+    //$routes->post('pelicula/imagen_delete/(:num)', 'Dashboard\Pelicula::borrar_imagen/$1', ['as' => 'pelicula.borrar_imagen']);
+    $routes->post('pelicula/imagen_delete/(:num)/(:num)', 'Dashboard\Pelicula::borrar_imagen/$1/$2', ['as' => 'pelicula.borrar_imagen']);
+    $routes->get('pelicula/imagen_descargar/(:num)', 'Dashboard\Pelicula::descargar_imagen/$1', ['as' => 'pelicula.descargar_imagen']);
     $routes->post('pelicula/(:num)/etiqueta/(:num)/delete', 'Dashboard\Pelicula::etiqueta_delete/$1/$2', ['as' => 'pelicula.etiqueta_delete']);
 
     $routes->presenter('pelicula', ['controller' => 'Dashboard\Pelicula']);
@@ -52,6 +55,9 @@ $routes->get('register', '\App\Controllers\Web\Usuario::register', ['as' => 'usu
 $routes->post('register_post', '\App\Controllers\Web\Usuario::register_post', ['as' => 'usuario.register_post']);
 
 $routes->get('logout', '\App\Controllers\Web\Usuario::logout', ['as' => 'usuario.logout']);
+
+// test
+$routes->get('/image/(:any)', 'Dashboard\Pelicula::image/$1', ['as' => 'get_image']);
 
 
 

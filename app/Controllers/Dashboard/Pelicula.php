@@ -81,6 +81,8 @@ class Pelicula extends BaseController
                 'descripcion' => $this->request->getPost('descripcion'),
                 'categoria_id' => $this->request->getPost('categoria_id')
             ]);
+
+            $this->asignar_imagen($id);
         } else {
             session()->setFlashdata([
                 'validation' => $this->validator
@@ -109,8 +111,6 @@ class Pelicula extends BaseController
         $peliculaModel = new PeliculaModel();
 
         // $this->generar_imagen();
-
-        $this->asignar_imagen();
 
 
         // $db = \Config\Database::connect();
@@ -179,21 +179,109 @@ class Pelicula extends BaseController
         //return redirect()->back()->with('mensaje', 'Etiqueta eliminada');
     }
 
-    private function generar_imagen()
+    public function descargar_imagen($imagenId)
     {
         $imagenModel = new ImagenModel();
-        $imagenModel->insert([
-            'imagen' => date('Y-m-d H:m:s'),
-            'extension' => 'Pendiente',
-            'data' => 'Pendiente'
-        ]);
+
+        $imagen = $imagenModel->find($imagenId);
+
+        if ($imagen == null) {
+            return 'no existe imagen';
+        }
+
+        //$imageRuta = WRITEPATH . 'uploads/peliculas/' . $imagen->imagen;
+        $imageRuta =  'uploads/peliculas/' . $imagen->imagen;
+
+        return $this->response->download($imageRuta, null)->setFileName('imagen.png');
     }
-    private function asignar_imagen()
+
+    public function borrar_imagen($peliculaId, $imagenId)
     {
+        $imagenModel = new ImagenModel();
+        $peliculaModel = new PeliculaModel();
         $peliculaImagenModel = new PeliculaImagenModel();
-        $peliculaImagenModel->insert([
-            'imagen_id' => 2,
-            'pelicula_id' => 3,
-        ]);
+
+        $imagen = $imagenModel->find($imagenId);
+
+        //archivo
+        if ($imagen == null) {
+            return 'no existe imagen';
+        }
+        //$imageRuta = WRITEPATH . 'uploads/peliculas/' . $imagen->imagen;
+        $imageRuta =  'uploads/peliculas/' . $imagen->imagen;
+        // archivo
+
+        // eliminar pivote
+        $peliculaImagenModel->where('imagen_id', $imagenId)->where('pelicula_id', $peliculaId)->delete();
+
+        if ($peliculaImagenModel->where('imagen_id', $imagenId)->countAllResults() == 0) {
+            // eliminar toda la imagen
+            unlink($imageRuta);
+            $imagenModel->delete($imagenId);
+        }
+
+        return redirect()->back()->with('mensaje', 'Imagen Eliminada');
+    }
+
+    private function asignar_imagen($peliculaId)
+    {
+        if ($imagefile = $this->request->getFile('imagen')) {
+            // upload
+            if ($imagefile->isValid()) {
+
+                $validated = $this->validate([
+                    'uploaded[imagen]',
+                    'mime_in[imagen,image/jpg,image/gif,image/png]',
+                    'max_size[imagen,4096]'
+                ]);
+
+                if ($validated) {
+                    $imageNombre = $imagefile->getRandomName();
+                    // $imageNombre = $imagefile->getName();
+                    $ext = $imagefile->guessExtension();
+
+                    // $imagefile->move(WRITEPATH . 'uploads/peliculas', $imageNombre);
+                    $imagefile->move('../public/uploads/peliculas', $imageNombre);
+
+                    $imagenModel = new ImagenModel();
+                    $imagenId = $imagenModel->insert([
+                        'imagen' => $imageNombre,
+                        'extension' => $ext,
+                        'data' => 'Pendiente'
+                    ]);
+
+                    $peliculaImagenModel = new PeliculaImagenModel();
+                    $peliculaImagenModel->insert([
+                        'imagen_id' => $imagenId,
+                        'pelicula_id' => $peliculaId,
+                    ]);
+                }
+
+                return $this->validator->listErrors();
+            }
+        }
+    }
+
+    function image($image)
+    {
+        // abre el archivo en modo binario
+        if (!$image) {
+            $image = $this->request->getGet('image');
+        }
+        $name = WRITEPATH . 'uploads/peliculas/' . $image;
+
+        if (!file_exists($name)) {
+            // throw PageNotFoundException::forPageNotFound();
+        }
+
+        $fp = fopen($name, 'rb');
+
+        // envía las cabeceras correctas
+        header("Content-Type: image/png");
+        header("Content-Length: " . filesize($name));
+
+        // vuelca la imagen y detiene el script
+        fpassthru($fp);
+        exit;
     }
 }
