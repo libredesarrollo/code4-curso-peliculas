@@ -47,6 +47,8 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
 
+       // helper(['cookie', 'date']);
+
         // E.g.: $this->session = \Config\Services::session();
     }
 }

@@ -40,6 +40,7 @@
             </td>
         </tr>
     <?php endforeach ?>
-
 </table>
+
+<?= $pager->links() ?>
 <?= $this->endSection() ?>

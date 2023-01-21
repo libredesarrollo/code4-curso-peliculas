@@ -12,6 +12,12 @@ use App\Models\PeliculaModel;
 
 class Pelicula extends BaseController
 {
+
+    // public function __construct()
+    // {
+    //     helper(['cookie', 'date']);
+    // }
+
     public function show($id)
     {
         $peliculaModel = new PeliculaModel();
@@ -110,6 +116,7 @@ class Pelicula extends BaseController
 
         $peliculaModel = new PeliculaModel();
 
+
         // $this->generar_imagen();
 
 
@@ -119,7 +126,10 @@ class Pelicula extends BaseController
         // return $builder->limit(10, 20)->getCompiledSelect();
 
         $data = [
-            'peliculas' => $peliculaModel->select('peliculas.*, categorias.titulo as categoria')->join('categorias', 'categorias.id = peliculas.categoria_id')->find()
+            'peliculas' => $peliculaModel->select('peliculas.*, categorias.titulo as categoria')->join('categorias', 'categorias.id = peliculas.categoria_id')
+                ->paginate(10),
+            'pager' => $peliculaModel->pager
+            //->find()
         ];
 
         echo view('dashboard/pelicula/index', $data);
@@ -225,6 +235,9 @@ class Pelicula extends BaseController
 
     private function asignar_imagen($peliculaId)
     {
+
+        helper('filesystem');
+
         if ($imagefile = $this->request->getFile('imagen')) {
             // upload
             if ($imagefile->isValid()) {
@@ -247,7 +260,7 @@ class Pelicula extends BaseController
                     $imagenId = $imagenModel->insert([
                         'imagen' => $imageNombre,
                         'extension' => $ext,
-                        'data' => 'Pendiente'
+                        'data' => json_encode(get_file_info('../public/uploads/peliculas/' . $imageNombre))
                     ]);
 
                     $peliculaImagenModel = new PeliculaImagenModel();
