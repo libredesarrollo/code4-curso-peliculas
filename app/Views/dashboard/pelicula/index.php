@@ -1,9 +1,9 @@
 <?= $this->extend('Layouts/dashboard') ?>
 
 <?= $this->section('contenido') ?>
-<a href="/dashboard/pelicula/new">Crear</a>
+<a class="btn btn-success btn-lg mb-4" href="/dashboard/pelicula/new">Crear</a>
 
-<table>
+<table class="table">
 
     <tr>
         <th>
@@ -29,12 +29,12 @@
             <td><?= $p->categoria ?></td>
             <td><?= $p->descripcion ?></td>
             <td>
-                <a href="/dashboard/pelicula/show/<?= $p->id ?>">Show</a>
-                <a href="/dashboard/pelicula/edit/<?= $p->id ?>">Edit</a>
-                <a href="<?= route_to('pelicula.etiquetas', $p->id) ?>">Tags</a>
+                <a href="/dashboard/pelicula/show/<?= $p->id ?>" class="btn btn-secondary btn-sm mt-1">Show</a>
+                <a href="/dashboard/pelicula/edit/<?= $p->id ?>" class="btn btn-primary btn-sm mt-1">Edit</a>
+                <a class="btn btn-primary btn-sm mt-1" href="<?= route_to('pelicula.etiquetas', $p->id) ?>">Tags</a>
 
                 <form action="/dashboard/pelicula/delete/<?= $p->id ?>" method="post">
-                    <button type="submit">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm mt-1">Delete</button>
                 </form>
 
             </td>

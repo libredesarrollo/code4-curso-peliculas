@@ -1,9 +1,9 @@
 <?= $this->extend('Layouts/dashboard') ?>
 
 <?= $this->section('contenido') ?>
-<a href="/dashboard/etiqueta/new">Crear</a>
+<a class="btn btn-success btn-lg mb-4" href="/dashboard/etiqueta/new">Crear</a>
 
-<table>
+<table class="table">
 
     <tr>
         <th>
@@ -25,11 +25,11 @@
             <td><?= $p->titulo ?></td>
             <td><?= $p->categoria ?></td>
             <td>
-                <a href="/dashboard/etiqueta/show/<?= $p->id ?>">Show</a>
-                <a href="/dashboard/etiqueta/edit/<?= $p->id ?>">Edit</a>
+                <a href="/dashboard/etiqueta/show/<?= $p->id ?>" class="btn btn-secondary btn-sm mt-1" >Show</a>
+                <a href="/dashboard/etiqueta/edit/<?= $p->id ?>" class="btn btn-primary btn-sm mt-1" >Edit</a>
 
                 <form action="/dashboard/etiqueta/delete/<?= $p->id ?>" method="post">
-                    <button type="submit">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm mt-1" >Delete</button>
                 </form>
 
             </td>

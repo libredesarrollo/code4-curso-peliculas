@@ -6,8 +6,8 @@ Listado de categorías
 
 <?= $this->section('contenido') ?>
 
-<a href="/dashboard/categoria/new">Crear</a>
-<table>
+<a class="btn btn-success btn-lg mb-4" href="/dashboard/categoria/new">Crear</a>
+<table class="table">
 
     <tr>
         <th>
@@ -25,11 +25,11 @@ Listado de categorías
             <td><?= $p->id ?></td>
             <td><?= $p->titulo ?></td>
             <td>
-                <a href="/dashboard/categoria/show/<?= $p->id ?>">Show</a>
-                <a href="/dashboard/categoria/edit/<?= $p->id ?>">Edit</a>
+                <a href="/dashboard/categoria/show/<?= $p->id ?>" class="btn btn-secondary btn-sm mt-1">Show</a>
+                <a href="/dashboard/categoria/edit/<?= $p->id ?>" class="btn btn-primary btn-sm mt-1">Edit</a>
 
                 <form action="/dashboard/categoria/delete/<?= $p->id ?>" method="post">
-                    <button type="submit">Delete</button>
+                    <button class="btn btn-danger btn-sm mt-1" type="submit">Delete</button>
                 </form>
 
             </td>
