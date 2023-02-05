@@ -48,6 +48,15 @@ $routes->group('dashboard', function ($routes) {
     $routes->presenter('categoria', ['except' => ['show'], 'controller' => 'Dashboard\Categoria']);
 });
 
+$routes->group('blog', function ($routes) {
+    // $routes->presenter('', ['controller' => 'Blog\Pelicula', 'only' => ['index', 'show']]);
+    $routes->get('', 'Blog\Pelicula::index', ['as' => 'blog.pelicula.index']);
+    $routes->get('categorias/(:num)', 'Blog\Pelicula::index_por_categoria/$1', ['as' => 'blog.pelicula.index_por_categoria']);
+    $routes->get('etiquetas/(:num)', 'Blog\Pelicula::index_por_etiqueta/$1', ['as' => 'blog.pelicula.index_por_etiqueta']);
+    $routes->get('(:num)', 'Blog\Pelicula::show/$1', ['as' => 'blog.pelicula.show']);
+    $routes->get('etiquetas_por_categoria/(:num)', 'Blog\Pelicula::etiquetas_por_categoria/$1', ['as' => 'blog.pelicula.etiquetas_por_categoria']);
+});
+
 $routes->get('login', '\App\Controllers\Web\Usuario::login', ['as' => 'usuario.login']);
 $routes->post('login_post', '\App\Controllers\Web\Usuario::login_post', ['as' => 'usuario.login_post']);
 
