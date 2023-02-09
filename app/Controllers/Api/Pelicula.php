@@ -2,7 +2,9 @@
 
 namespace App\Controllers\Api;
 
+use App\Models\ImagenModel;
 use App\Models\PeliculaEtiquetaModel;
+use App\Models\PeliculaImagenModel;
 use CodeIgniter\RESTful\ResourceController;
 
 class Pelicula extends ResourceController
@@ -121,6 +123,10 @@ class Pelicula extends ResourceController
                 return $this->respond($this->validator->getError('descripcion'), 400);
             }
 
+            if ($this->validator->getError('categoria_id')) {
+                return $this->respond($this->validator->getError('categoria_id'), 400);
+            }
+
             //return $this->respond($this->validator->getErrors(), 400);
         }
 
@@ -158,7 +164,75 @@ class Pelicula extends ResourceController
         $peliculaEtiqueta->where('etiqueta_id', $etiquetaId)
             ->where('pelicula_id', $id)->delete();
 
-        echo '{"mensaje":"Eliminado"}';
+        return $this->respond('ok');
+    }
+
+    function upload($peliculaId)
+    {
+
+        helper('filesystem');
+
+        if ($imagefile = $this->request->getFile('imagen')) {
+            // upload
+            if ($imagefile->isValid()) {
+
+                $validated = $this->validate([
+                    'uploaded[imagen]',
+                    'mime_in[imagen,image/jpg,image/gif,image/png]',
+                    'max_size[imagen,4096]'
+                ]);
+
+                if ($validated) {
+                    $imageNombre = $imagefile->getRandomName();
+                    // $imageNombre = $imagefile->getName();
+                    $ext = $imagefile->guessExtension();
+
+                    // $imagefile->move(WRITEPATH . 'uploads/peliculas', $imageNombre);
+                    $imagefile->move('../public/uploads/peliculas', $imageNombre);
+
+                    $imagenModel = new ImagenModel();
+                    $imagenId = $imagenModel->insert([
+                        'imagen' => $imageNombre,
+                        'extension' => $ext,
+                        'data' => json_encode(get_file_info('../public/uploads/peliculas/' . $imageNombre))
+                    ]);
+
+                    $peliculaImagenModel = new PeliculaImagenModel();
+                    $peliculaImagenModel->insert([
+                        'imagen_id' => $imagenId,
+                        'pelicula_id' => $peliculaId,
+                    ]);
+                    return $this->respond('Imagen cargada con exito');
+                }
+            }
+        }
+
+        return $this->respond('La imagen es requerida', 400);
+    }
+
+    public function borrar_imagen($peliculaId, $imagenId)
+    {
+        $imagenModel = new ImagenModel();
+        $peliculaImagenModel = new PeliculaImagenModel();
+
+        $imagen = $imagenModel->find($imagenId);
+
+        //archivo
+        if ($imagen == null) {
+            return $this->respond('no existe imagen');
+        }
+        //$imageRuta = WRITEPATH . 'uploads/peliculas/' . $imagen->imagen;
+        $imageRuta =  'uploads/peliculas/' . $imagen->imagen;
+        // archivo
+
+        // eliminar pivote
+        $peliculaImagenModel->where('imagen_id', $imagenId)->where('pelicula_id', $peliculaId)->delete();
+
+        if ($peliculaImagenModel->where('imagen_id', $imagenId)->countAllResults() == 0) {
+            // eliminar toda la imagen
+            unlink($imageRuta);
+            $imagenModel->delete($imagenId);
+        }
 
         return $this->respond('ok');
     }

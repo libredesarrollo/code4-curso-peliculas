@@ -32,6 +32,9 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('pelicula/index_por_etiqueta/(:num)', 'Pelicula::index_por_etiqueta/$1');
 
     $routes->post('pelicula/etiqueta/(:num)', 'Pelicula::etiquetas_post/$1');
+    $routes->post('pelicula/(:num)/imagen/upload', 'Pelicula::upload/$1');
+    $routes->delete('pelicula/(:num)/imagen/delete/(:num)', 'Pelicula::borrar_imagen/$1/$2');
+
     $routes->delete('pelicula/(:num)/etiqueta/(:num)/delete', 'Pelicula::etiqueta_delete/$1/$2', ['as' => 'pelicula.etiqueta_delete']);
 
     $routes->resource('pelicula');
