@@ -4,32 +4,24 @@ namespace App\Controllers\Dashboard;
 
 use App\Controllers\BaseController;
 use App\Models\CategoriaModel;
-use App\Models\EtiquetaModel;
 use App\Models\ImagenModel;
-use App\Models\PeliculaEtiquetaModel;
 use App\Models\PeliculaImagenModel;
 use App\Models\PeliculaModel;
 
 class Pelicula extends BaseController
 {
 
-    // public function __construct()
-    // {
-    //     helper(['cookie', 'date']);
-    // }
-
-    public function show($id)
+    public function show($id = null)
     {
         $peliculaModel = new PeliculaModel();
 
-        // var_dump($peliculaModel->asArray()->find($id));
-        // var_dump($peliculaModel->asObject()->find($id));
+        $data = [
+            'pelicula' => $peliculaModel->asObject()->find($id),
+            'imagenes' => $peliculaModel->getImagesById($id)
+        ];
+        //var_dump($imagenModel->getPeliculasById(1));
 
-        echo view('dashboard/pelicula/show', [
-            'pelicula' => $peliculaModel->find($id),
-            'imagenes' => $peliculaModel->getImagesById($id),
-            'etiquetas' => $peliculaModel->getEtiquetasById($id),
-        ]);
+        echo view("pelicula/show", $data);
     }
 
     public function new()
@@ -37,22 +29,42 @@ class Pelicula extends BaseController
 
         $categoriaModel = new CategoriaModel();
 
-        echo view('dashboard/pelicula/new', [
+        $data = [
             'pelicula' => new PeliculaModel(),
-            'categorias' => $categoriaModel->find()
-        ]);
+            'categorias' => $categoriaModel->asObject()->find()
+        ];
+
+        echo view("pelicula/new", $data);
+    }
+
+    public function index()
+    {
+        // $this->generar_imagen();
+        // $this->asignar_imagen();
+        $peliculaModel = new PeliculaModel();
+
+        $data = [
+            'peliculas' => $peliculaModel
+                ->select("peliculas.*, categorias.titulo as categoria")
+                ->asObject()
+                ->join('categorias', 'categorias.id = peliculas.categoria_id')
+                //->find()
+                ->paginate(5),
+            'pager' => $peliculaModel->pager
+        ];
+
+        echo view("pelicula/index", $data);
     }
 
     public function create()
     {
-
         $peliculaModel = new PeliculaModel();
 
         if ($this->validate('peliculas')) {
             $peliculaModel->insert([
                 'titulo' => $this->request->getPost('titulo'),
                 'descripcion' => $this->request->getPost('descripcion'),
-                'categoria_id' => $this->request->getPost('categoria_id'),
+                'categoria_id' => $this->request->getPost('categoria_id')
             ]);
         } else {
             session()->setFlashdata([
@@ -62,7 +74,7 @@ class Pelicula extends BaseController
             return redirect()->back()->withInput();
         }
 
-        return redirect()->to('/dashboard/pelicula')->with('mensaje', 'Registro gestionado de manera exitosa');
+        return redirect()->to('/dashboard/pelicula/new')->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function edit($id)
@@ -70,15 +82,16 @@ class Pelicula extends BaseController
         $peliculaModel = new PeliculaModel();
         $categoriaModel = new CategoriaModel();
 
-        echo view('dashboard/pelicula/edit', [
-            'pelicula' => $peliculaModel->find($id),
-            'categorias' => $categoriaModel->find()
-        ]);
+        $data = [
+            'pelicula' => $peliculaModel->asObject()->find($id),
+            'categorias' => $categoriaModel->asObject()->find()
+        ];
+
+        echo view("pelicula/edit", $data);
     }
 
     public function update($id)
     {
-
         $peliculaModel = new PeliculaModel();
 
         if ($this->validate('peliculas')) {
@@ -93,143 +106,28 @@ class Pelicula extends BaseController
             session()->setFlashdata([
                 'validation' => $this->validator
             ]);
-
             return redirect()->back()->withInput();
         }
 
-        return redirect()->back()->with('mensaje', 'Registro gestionado de manera exitosa');
-        // return redirect()->to('/dashboard/pelicula');
-        // return redirect()->to('/dashboard/test');
-        // return redirect()->route('pelicula.test');
+        return redirect()->to('/dashboard/pelicula/edit/' . $id)->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function delete($id)
     {
         $peliculaModel = new PeliculaModel();
-        $peliculaModel->delete($id);
+        $peliculaModel->asObject()->delete($id);
 
-        return redirect()->back()->with('mensaje', 'Registro gestionado de manera exitosa');
+        return redirect()->to('/dashboard/pelicula')->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
-    public function index()
+    private function generar_imagen()
     {
-
-        $peliculaModel = new PeliculaModel();
-
-
-        // $this->generar_imagen();
-
-
-        // $db = \Config\Database::connect();
-        // $builder = $db->table('peliculas');
-
-        // return $builder->limit(10, 20)->getCompiledSelect();
-
-        $data = [
-            'peliculas' => $peliculaModel->select('peliculas.*, categorias.titulo as categoria')->join('categorias', 'categorias.id = peliculas.categoria_id')
-                ->paginate(10),
-            'pager' => $peliculaModel->pager
-            //->find()
-        ];
-
-        echo view('dashboard/pelicula/index', $data);
-    }
-
-
-
-    public function etiquetas($id)
-    {
-        $categoriaModel = new CategoriaModel();
-        $etiquetaModel = new EtiquetaModel();
-        $peliculaModel = new PeliculaModel();
-
-        $etiquetas = [];
-
-        if ($this->request->getGet('categoria_id')) {
-            $etiquetas = $etiquetaModel
-                ->where('categoria_id', $this->request->getGet('categoria_id'))
-                ->findAll();
-        }
-
-        echo view('dashboard/pelicula/etiquetas', [
-            'pelicula' => $peliculaModel->find($id),
-            'categorias' => $categoriaModel->findAll(),
-            'categoria_id' => $this->request->getGet('categoria_id'),
-            'etiquetas' => $etiquetas,
+        $imageModel = new ImagenModel();
+        $imageModel->insert([
+            'nombre' => date("Y-m-d H:i:s"),
+            'extension' => 'Pendiente',
+            'data' => 'Pendiente'
         ]);
-    }
-
-    public function etiquetas_post($id)
-    {
-        $peliculaEtiquetaModel = new PeliculaEtiquetaModel();
-
-        $etiquetaId = $this->request->getPost('etiqueta_id');
-        $peliculaId = $id;
-
-        $peliculaEtiqueta = $peliculaEtiquetaModel->where('etiqueta_id', $etiquetaId)->where('pelicula_id', $peliculaId)->first();
-
-        if (!$peliculaEtiqueta) {
-            $peliculaEtiquetaModel->insert([
-                'pelicula_id' => $peliculaId,
-                'etiqueta_id' => $etiquetaId
-            ]);
-        }
-
-        return redirect()->back();
-    }
-
-    public function etiqueta_delete($id, $etiquetaId)
-    {
-        $peliculaEtiqueta = new PeliculaEtiquetaModel();
-        $peliculaEtiqueta->where('etiqueta_id', $etiquetaId)
-            ->where('pelicula_id', $id)->delete();
-
-        echo '{"mensaje":"Eliminado"}';
-
-        //return redirect()->back()->with('mensaje', 'Etiqueta eliminada');
-    }
-
-    public function descargar_imagen($imagenId)
-    {
-        $imagenModel = new ImagenModel();
-
-        $imagen = $imagenModel->find($imagenId);
-
-        if ($imagen == null) {
-            return 'no existe imagen';
-        }
-
-        //$imageRuta = WRITEPATH . 'uploads/peliculas/' . $imagen->imagen;
-        $imageRuta =  'uploads/peliculas/' . $imagen->imagen;
-
-        return $this->response->download($imageRuta, null)->setFileName('imagen.png');
-    }
-
-    public function borrar_imagen($peliculaId, $imagenId)
-    {
-        $imagenModel = new ImagenModel();
-        $peliculaImagenModel = new PeliculaImagenModel();
-
-        $imagen = $imagenModel->find($imagenId);
-
-        //archivo
-        if ($imagen == null) {
-            return 'no existe imagen';
-        }
-        //$imageRuta = WRITEPATH . 'uploads/peliculas/' . $imagen->imagen;
-        $imageRuta =  'uploads/peliculas/' . $imagen->imagen;
-        // archivo
-
-        // eliminar pivote
-        $peliculaImagenModel->where('imagen_id', $imagenId)->where('pelicula_id', $peliculaId)->delete();
-
-        if ($peliculaImagenModel->where('imagen_id', $imagenId)->countAllResults() == 0) {
-            // eliminar toda la imagen
-            unlink($imageRuta);
-            $imagenModel->delete($imagenId);
-        }
-
-        return redirect()->back()->with('mensaje', 'Imagen Eliminada');
     }
 
     private function asignar_imagen($peliculaId)
@@ -238,62 +136,41 @@ class Pelicula extends BaseController
         helper('filesystem');
 
         if ($imagefile = $this->request->getFile('imagen')) {
-            // upload
-            if ($imagefile->isValid()) {
+
+            if ($imagefile->isValid() && !$imagefile->hasMoved()) {
 
                 $validated = $this->validate([
-                    'uploaded[imagen]',
-                    'mime_in[imagen,image/jpg,image/gif,image/png]',
-                    'max_size[imagen,4096]'
+                    'image' => [
+                        'uploaded[imagen]',
+                        'mime_in[imagen,image/jpg,image/jpeg,image/gif,image/png]',
+                        'max_size[imagen,4096]',
+                    ],
                 ]);
 
                 if ($validated) {
-                    $imageNombre = $imagefile->getRandomName();
-                    // $imageNombre = $imagefile->getName();
+
+                    $imagenNombre = $imagefile->getRandomName();
                     $ext = $imagefile->guessExtension();
+                    //$imagefile->move(WRITEPATH . 'uploads/peliculas/', $imagenNombre);
+                    $imagefile->move('../public/uploads/peliculas/', $imagenNombre);
 
-                    // $imagefile->move(WRITEPATH . 'uploads/peliculas', $imageNombre);
-                    $imagefile->move('../public/uploads/peliculas', $imageNombre);
-
-                    $imagenModel = new ImagenModel();
-                    $imagenId = $imagenModel->insert([
-                        'imagen' => $imageNombre,
+                    //var_dump(json_encode(get_file_info(WRITEPATH . 'uploads/peliculas/' . $imagenNombre)));
+                    $imageModel = new ImagenModel();
+                    $imagenId = $imageModel->insert([
+                        'nombre' => $imagenNombre,
                         'extension' => $ext,
-                        'data' => json_encode(get_file_info('../public/uploads/peliculas/' . $imageNombre))
+                        'data' => json_encode(get_file_info(WRITEPATH . 'uploads/peliculas/' . $imagenNombre))
                     ]);
 
                     $peliculaImagenModel = new PeliculaImagenModel();
                     $peliculaImagenModel->insert([
-                        'imagen_id' => $imagenId,
                         'pelicula_id' => $peliculaId,
+                        'imagen_id' => $imagenId,
                     ]);
+                    return true;
                 }
-
                 return $this->validator->listErrors();
             }
         }
-    }
-
-    function image($image)
-    {
-        // abre el archivo en modo binario
-        if (!$image) {
-            $image = $this->request->getGet('image');
-        }
-        $name = WRITEPATH . 'uploads/peliculas/' . $image;
-
-        if (!file_exists($name)) {
-            // throw PageNotFoundException::forPageNotFound();
-        }
-
-        $fp = fopen($name, 'rb');
-
-        // envía las cabeceras correctas
-        header("Content-Type: image/png");
-        header("Content-Length: " . filesize($name));
-
-        // vuelca la imagen y detiene el script
-        fpassthru($fp);
-        exit;
     }
 }

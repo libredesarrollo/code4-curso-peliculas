@@ -2,33 +2,16 @@
 
 namespace App\Controllers\Web;
 
-use App\Controllers\BaseController;
 use App\Models\UsuarioModel;
+use App\Controllers\BaseController;
+use \CodeIgniter\Exceptions\PageNotFoundException;
 
 class Usuario extends BaseController
 {
-    public function crear_usuario()
-    {
-        $usuarioModel = new UsuarioModel();
-
-        $usuarioModel->insert(
-            [
-                'usuario' => 'admin',
-                'email' => 'admin@gmail.com',
-                'contrasena' => $usuarioModel->contrasenaHash('12345'),
-            ]
-        );
-    }
-
-    public function probar_contrasena()
-    {
-        $usuarioModel = new UsuarioModel();
-        var_dump($usuarioModel->contrasenaVerificar('12345', '$2y$10$zmw1nhPaMbNTCDNY4Zj8yOMiJPVd7bHbLs.bmT5Qw8jRTDJLt3YMi'));
-    }
 
     public function login()
     {
-        echo view('web/usuario/login');
+        echo view("web/usuario/login");
     }
 
     public function login_post()
@@ -36,35 +19,31 @@ class Usuario extends BaseController
 
         $usuarioModel = new UsuarioModel();
 
-        $email = $this->request->getPost('email'); // email or usuario
-        $contrasena = $this->request->getPost('contrasena'); // pw
+        $email = $this->request->getPost('email');
+        $contrasena = $this->request->getPost('contrasena');
 
-        $usuario = $usuarioModel->select('id,usuario,email,contrasena,tipo')
-            ->orWhere('email', $email)
-            ->orWhere('usuario', $email)
-            ->first();
+        $usuario = $usuarioModel->select('id,usuario,email,contrasena,tipo')->orWhere('email', $email)->orWhere('usuario', $email)->first();
 
-        if (!$usuario) {
-            return redirect()->back()->with('mensaje', 'Usuario y/o contrasena invalida');
+        if (!$usuario)
+            return redirect()->back()->with('mensaje', 'Usuario y/o contraseña incorrecto');
+
+        if ($usuarioModel->contrasenaVerificar($contrasena, $usuario['contrasena'])) {
+            $session = session();
+            unset($usuario['contrasena']);
+            $session->set($usuario);
+            return redirect()->to('/dashboard/categoria')->with('mensaje', 'Bienvenido');
         }
 
-        if ($usuarioModel->contrasenaVerificar($contrasena, $usuario->contrasena)) {
-            unset($usuario->contrasena);
-            session()->set('usuario', $usuario);
-
-            return redirect()->to('/dashboard/categoria')->with('mensaje', "Bienvenid@ $usuario->usuario");
-        }
-
-        return redirect()->back()->with('mensaje', 'Usuario y/o contrasena invalida');
-    }
-    public function register()
-    {
-        echo view('web/usuario/register');
+        return redirect()->back()->with('mensaje', 'Usuario y/o contraseña incorrecto');
     }
 
-    public function register_post()
+    public function registrar()
     {
+        echo view("web/usuario/registrar");
+    }
 
+    public function registrar_post()
+    {
         $usuarioModel = new UsuarioModel();
 
         if ($this->validate('usuarios')) {
@@ -74,7 +53,7 @@ class Usuario extends BaseController
                 'contrasena' => $usuarioModel->contrasenaHash($this->request->getPost('contrasena')),
             ]);
 
-            return redirect()->to(route_to('usuario.login'))->with('mensaje', "Usuario registrado exitosamente");
+            return redirect()->to(route_to('usuario.login'))->with('message', 'Usuario creada con éxito.');
         }
 
         session()->setFlashdata([
@@ -86,7 +65,8 @@ class Usuario extends BaseController
 
     public function logout()
     {
-        session()->destroy();
+        $session = session();
+        $session->destroy();
         return redirect()->to(route_to('usuario.login'));
     }
 }

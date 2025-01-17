@@ -3,7 +3,6 @@
 namespace App\Controllers\Dashboard;
 
 use App\Controllers\BaseController;
-
 use App\Models\CategoriaModel;
 
 class Categoria extends BaseController
@@ -11,93 +10,88 @@ class Categoria extends BaseController
 
     public function show($id)
     {
-
-
-
         $categoriaModel = new CategoriaModel();
 
-        echo view('dashboard/categoria/show', [
-            'categoria' => $categoriaModel->find($id)
-        ]);
+        $data = [
+            'categoria' => $categoriaModel->asObject()->find($id),
+        ];
+
+        echo view("categoria/show", $data);
     }
 
     public function new()
     {
-        //var_dump(session()->destroy());
 
-        echo view('dashboard/categoria/new', [
-            'categoria' => new CategoriaModel()
-        ]);
+        $data = [
+            'categoria' => new CategoriaModel(),
+        ];
+
+        echo view("categoria/new", $data);
     }
 
-    public function create()
+    public function index()
     {
 
         $categoriaModel = new CategoriaModel();
 
+        $data = [
+            'categorias' => $categoriaModel->asObject()->find(),
+        ];
+
+        echo view("categoria/index", $data);
+    }
+
+    public function create()
+    {
+        $categoriaModel = new CategoriaModel();
+
         if ($this->validate('categorias')) {
-            $categoriaModel->insert([
+            $categoriaModel->asObject()->insert([
                 'titulo' => $this->request->getPost('titulo')
             ]);
         } else {
             session()->setFlashdata([
                 'validation' => $this->validator
             ]);
-
             return redirect()->back()->withInput();
         }
 
-        return redirect()->to('/dashboard/categoria')->with('mensaje', 'Registro gestionado de manera exitosa');
+        return redirect()->to('/dashboard/categoria/new')->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function edit($id)
     {
         $categoriaModel = new CategoriaModel();
 
-        echo view('dashboard/categoria/edit', [
-            'categoria' => $categoriaModel->find($id)
-        ]);
+        $data = [
+            'categoria' => $categoriaModel->asObject()->find($id),
+        ];
+
+        echo view("categoria/edit", $data);
     }
 
     public function update($id)
     {
-
         $categoriaModel = new CategoriaModel();
 
         if ($this->validate('categorias')) {
-            $categoriaModel->update($id, [
+            $categoriaModel->asObject()->update($id, [
                 'titulo' => $this->request->getPost('titulo')
             ]);
         } else {
             session()->setFlashdata([
                 'validation' => $this->validator
             ]);
-
             return redirect()->back()->withInput();
         }
-
-        return redirect()->back()->with('mensaje', 'Registro gestionado de manera exitosa');
+        return redirect()->to('/dashboard/categoria/edit/' . $id)->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 
     public function delete($id)
     {
         $categoriaModel = new CategoriaModel();
-        $categoriaModel->delete($id);
+        $categoriaModel->asObject()->delete($id);
 
-        session()->setFlashdata('mensaje', 'Registro eliminado de manera exitosa');
-
-        return redirect()->back();
-        // return redirect()->back()->with('mensaje', 'Registro gestionado de manera exitosa');
-    }
-
-    public function index()
-    {
-        //session()->set('key',array('k','c'));
-        $categoriaModel = new CategoriaModel();
-
-        echo view('dashboard/categoria/index', [
-            'categorias' => $categoriaModel->paginate(10), //->findAll(),
-            'pager' => $categoriaModel->pager
-        ]);
+        return redirect()->to('/dashboard/categoria')->with('mensaje', 'Registro gestionado de manera exitosa');
     }
 }

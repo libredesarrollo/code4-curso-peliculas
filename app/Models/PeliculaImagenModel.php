@@ -6,6 +6,6 @@ use CodeIgniter\Model;
 
 class PeliculaImagenModel extends Model
 {
-    protected $table            = 'pelicula_imagen';
-    protected $allowedFields    = ['pelicula_id', 'imagen_id'];
+    protected $table = 'pelicula_imagen';
+    protected $allowedFields = ['pelicula_id', 'imagen_id'];
 }
