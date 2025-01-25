@@ -17,6 +17,7 @@ class Pelicula extends ResourceController
 
     public function show($id = null)
     {
+     
         return $this->respond($this->model->find($id));
     }
 
