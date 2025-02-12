@@ -23,9 +23,12 @@ class Pelicula extends ResourceController
 
     public function delete($id = null)
     {
+
         $this->model->delete($id);
-        return $this->respond();
+        // return $this->respond();
+        return $this->respondDeleted(['message' => 'Recurso eliminado']);
     }
+
 
     public function create()
     {
@@ -40,10 +43,12 @@ class Pelicula extends ResourceController
 
             return $this->respond($this->validator->getErrors(), 400);
         }
+   
 
         $id = $this->model->insert([
             'titulo' => $this->request->getPost('titulo'),
             'descripcion' => $this->request->getPost('descripcion'),
+            'categoria_id' => $this->request->getPost('categoria_id'),
         ]);
 
         return $this->respond($this->model->find($id));
@@ -51,19 +56,28 @@ class Pelicula extends ResourceController
 
     public function update($id = null)
     {
+        // json
+        // var_dump($this->request->getJSON()->title);
+        // return ;
+        // if (!$this->validate('peliculas')) {
 
-        if (!$this->validate('peliculas')) {
+        //     // if ($this->validator->getError("titulo"))
+        //     //     return $this->respond($this->validator->getError("titulo"), 400);
 
-            if ($this->validator->getError("titulo"))
-                return $this->respond($this->validator->getError("titulo"), 400);
+        //     // if ($this->validator->getError("descripcion"))
+        //     //     return $this->respond($this->validator->getError("descripcion"), 400);
 
-            if ($this->validator->getError("descripcion"))
-                return $this->respond($this->validator->getError("descripcion"), 400);
-        }
+        //     return $this->respond($this->validator->getErrors(), 400);
+        // }
 
         $this->model->update($id, [
-            'titulo' => $this->request->getRawInput()['titulo'],
-            'descripcion' => $this->request->getRawInput()['descripcion'],
+            // 'titulo' => $this->request->getRawInput()['titulo'],
+            // 'descripcion' => $this->request->getRawInput()['descripcion'],
+            'titulo' => $this->request->getJSON()->title,
+            'descripcion' => $this->request->getJSON()->description,
+            'categoria_id' => $this->request->getJSON()->category_id,
+            // 'titulo' => $this->request->getPost('titulo'),
+            // 'descripcion' => $this->request->getPost('descripcion'),
         ]);
 
         return $this->respond($this->model->find($id));
