@@ -38,6 +38,8 @@ class Filters extends BaseFilters
         'DashboardFilter' => DashboardFilter::class
     ];
 
+
+
     /**
      * List of special required filters.
      *
@@ -111,6 +113,10 @@ class Filters extends BaseFilters
                 'dashboard',
                 'dashboard/*'
             ]
-        ]
+        ],
+        // 'cors' => [
+        //     'before' => ['api/*'],
+        //     'after'  => ['api/*'],
+        // ],
     ];
 }

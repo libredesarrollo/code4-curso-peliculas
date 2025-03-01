@@ -22,9 +22,15 @@ $routes->post('registrar', '\App\Controllers\Web\Usuario::registrar_post', ['as'
 $routes->get('logout', '\App\Controllers\Web\Usuario::logout', ['as' => 'usuario.logout']);
 
 // API REST
-$routes->group('api', ['namespace' => '\App\Controllers\Api'], function ($routes) {
-    $routes->resource('pelicula');
-    $routes->resource('categoria');
+
+
+$routes->group('', ['filter' => 'cors'], static function (RouteCollection $routes): void {
+   
+    $routes->group('api', ['namespace' => '\App\Controllers\Api'], function ($routes) {
+        $routes->resource('pelicula');
+        $routes->resource('categoria');
+    });
+    $routes->options('api/(:any)', static function () {});
 });
 
 $routes->group('paypal', function ($routes) {
